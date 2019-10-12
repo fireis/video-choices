@@ -6,31 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>869</width>
-    <height>693</height>
+    <width>800</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QRadioButton" name="choose_emot_1">
-   <property name="geometry">
-    <rect>
-     <x>350</x>
-     <y>450</y>
-     <width>82</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Anger</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="confirm_button">
    <property name="geometry">
     <rect>
      <x>370</x>
-     <y>590</y>
+     <y>710</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -43,7 +30,7 @@
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>90</y>
+     <y>10</y>
      <width>541</width>
      <height>51</height>
     </rect>
@@ -60,18 +47,18 @@
   <widget class="QVideoWidget" name="video_player_1" native="true">
    <property name="geometry">
     <rect>
-     <x>270</x>
-     <y>170</y>
-     <width>256</width>
-     <height>256</height>
+     <x>150</x>
+     <y>70</y>
+     <width>512</width>
+     <height>512</height>
     </rect>
    </property>
   </widget>
   <widget class="QPushButton" name="next_button">
    <property name="geometry">
     <rect>
-     <x>540</x>
-     <y>650</y>
+     <x>570</x>
+     <y>730</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -80,44 +67,45 @@
     <string>Avançar</string>
    </property>
   </widget>
-  <widget class="QRadioButton" name="choose_emot_2">
+  <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>470</y>
-     <width>82</width>
-     <height>17</height>
+     <x>330</x>
+     <y>600</y>
+     <width>160</width>
+     <height>88</height>
     </rect>
    </property>
-   <property name="text">
-    <string>Fear</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="choose_emot_3">
-   <property name="geometry">
-    <rect>
-     <x>350</x>
-     <y>490</y>
-     <width>82</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Admiration</string>
-   </property>
-  </widget>
-  <widget class="QRadioButton" name="choose_video1_4">
-   <property name="geometry">
-    <rect>
-     <x>350</x>
-     <y>510</y>
-     <width>82</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Happy-for</string>
-   </property>
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
+     <widget class="QRadioButton" name="choose_emot_1">
+      <property name="text">
+       <string>Anger</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="choose_emot_3">
+      <property name="text">
+       <string>Admiration</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="choose_emot_2">
+      <property name="text">
+       <string>Fear</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="choose_video1_4">
+      <property name="text">
+       <string>Happy-for</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <customwidgets>

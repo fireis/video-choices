@@ -29,7 +29,7 @@ class MainWindow(QMainWindow):
 class VideoCompWindow(QtWidgets.QDialog):
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
-        self.ui = uic.loadUi("user_interfaces/comparisson_player.ui", self)
+        self.ui = uic.loadUi("user_interfaces/comparison_player.ui", self)
         self.player_1 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface)
         self.player_2 = QtMultimedia.QMediaPlayer(
