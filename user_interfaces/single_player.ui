@@ -82,6 +82,9 @@
       <property name="text">
        <string>Anger</string>
       </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
     <item>
@@ -99,7 +102,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="choose_video1_4">
+     <widget class="QRadioButton" name="choose_emot_4">
       <property name="text">
        <string>Happy-for</string>
       </property>
