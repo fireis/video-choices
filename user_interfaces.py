@@ -17,11 +17,30 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('user_interfaces/main_window.ui', self)
-        self.button1.clicked.connect(self.openOtherForm)
+        self.start_button.clicked.connect(self.openOtherForm)
+
+        self.gender_box.clear()
+        self.gender_box.addItems(["Masculino", "Feminino", "Não Binário", "Outros", "Prefiro não informar"])
+
+        self.edu_lvl_box.clear()
+        self.edu_lvl_box.addItems(["Superior Completo", "Superior Incompleto", "Médio Completo", "Médio Incompleto", "Fundamental Completo", "Fundamental Incompleto"])
+
+        self.age_range_box.clear()
+        self.age_range_box.addItems(
+            ["18 a 25 anos", "26 a 35 anos", "36 a 45 anos", "46 a 55 anos", "56 a 65 anos", "66 a 75 anos", "76 a 85 anos", "86 + anos" ])
+
+        self.start_button.setEnabled(False)
+
+        self.tcle_ok.toggled.connect(lambda:self.start_button.setEnabled(self.tcle_ok.isChecked()))
+
 
     def openOtherForm(self):
         # TODO: make a standard function to advance to the desired screen, to make the sequence random
+        # TODO: save the data to file
+        collected_data = [self.name_input.toPlainText(), self.gender_box.currentText(),  self.edu_lvl_box.currentText(), self.age_range_box.currentText() ]
+        print(collected_data)
         self.hide()
+
         otherview = VideoCompWindow(self)
         otherview.show()
 

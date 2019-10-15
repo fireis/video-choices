@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="button1">
+   <widget class="QPushButton" name="start_button">
     <property name="geometry">
      <rect>
       <x>320</x>
@@ -76,7 +76,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="plainTextEdit">
+        <widget class="QPlainTextEdit" name="name_input">
          <property name="minimumSize">
           <size>
            <width>256</width>
@@ -109,14 +109,14 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QLabel" name="sex_label">
+        <widget class="QLabel" name="gender_label">
          <property name="text">
-          <string>Sexo</string>
+          <string>Gênero</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="sex_box"/>
+        <widget class="QComboBox" name="gender_box"/>
        </item>
       </layout>
      </item>
@@ -194,7 +194,7 @@
      <string>Avaliação de Síntese Expressiva</string>
     </property>
    </widget>
-   <widget class="QRadioButton" name="radioButton">
+   <widget class="QRadioButton" name="tcle_ok">
     <property name="geometry">
      <rect>
       <x>270</x>
