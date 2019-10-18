@@ -110,6 +110,23 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="play_button">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>600</y>
+     <width>51</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>C:/Users/fibr1/Downloads/mediaplayer/mediaplayer/images/control.png</normaloff>C:/Users/fibr1/Downloads/mediaplayer/mediaplayer/images/control.png</iconset>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
