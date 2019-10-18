@@ -21,11 +21,19 @@ from PyQt5 import QtMultimedia
 from PyQt5 import QtCore
 import sys
 import os
+import uuid
+import pandas as pd
+import logging
+
+# I hate this, but this is what you get when youre sleepy, but wants to get it done
+exp_counter = 0
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, data, id):
         super(MainWindow, self).__init__()
+        self.data = data
+        self.id = id
         uic.loadUi("user_interfaces/main_window.ui", self)
         self.start_button.clicked.connect(self.openOtherForm)
 
@@ -68,17 +76,21 @@ class MainWindow(QMainWindow):
 
     def openOtherForm(self):
         # TODO: make a standard function to advance to the desired screen, to make the sequence random
-        # TODO: save the data to file
-        collected_data = [
-            self.name_input.toPlainText(),
-            self.gender_box.currentText(),
-            self.edu_lvl_box.currentText(),
-            self.age_range_box.currentText(),
-        ]
+        collected_data = {
+            "id": self.id,
+            "name": self.name_input.toPlainText(),
+            "gender": self.gender_box.currentText(),
+            "edu": self.edu_lvl_box.currentText(),
+            "age": self.age_range_box.currentText(),
+        }
+        logging.info(collected_data)
         print(collected_data)
-        self.hide()
 
-        otherview = VideoCompWindow(self)
+        self.data = self.data.append(collected_data, ignore_index=True)
+        # JSON would make more sense, but lets try a csv for now
+        save_df(self.data)
+        self.hide()
+        otherview = next_test(self)
         otherview.show()
 
 
@@ -111,10 +123,18 @@ class VideoCompWindow(QtWidgets.QDialog):
 
         self.next_button.clicked.connect(self.openNextScreen)
 
+        self.play_button.clicked.connect(self.reset_video)
+
     def openNextScreen(self):
         self.hide()
-        otherview = VideoSingleWindow(self)
+        otherview = next_test(self)
+        global exp_counter
+        exp_counter += 1
         otherview.show()
+
+    def reset_video(self):
+        self.player_1.setPosition(1)
+        self.player_2.setPosition(1)
 
 
 class VideoSingleWindow(QtWidgets.QDialog):
@@ -134,16 +154,62 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.next_button.setEnabled(False)
         self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
 
+        self.play_button.clicked.connect(self.reset_video)
+
         self.next_button.clicked.connect(self.openNextScreen)
 
     def openNextScreen(self):
         self.hide()
-        otherview = VideoSingleWindow(self)
+        otherview = next_test(self)
+        global exp_counter
+        exp_counter += 1
         otherview.show()
+
+    def reset_video(self):
+        self.player_1.setPosition(1)
+
+
+class EndWindow(QtWidgets.QDialog):
+    def __init__(self, parent=None):
+        QtWidgets.QDialog.__init__(self, parent)
+
+        self.ui = uic.loadUi("user_interfaces/end_window.ui", self)
+        self.end_button.clicked.connect(self.close)
+
+
+def init_experiment():
+    id = uuid.uuid4().__str__()
+    data = pd.DataFrame(columns=["id", "name", "gender", "edu", "age", "v1"])
+    logging.basicConfig(
+        filename="app.log",
+        filemode="a",
+        level=logging.DEBUG,
+        format="%(asctime)s -  %(levelname)s - %(message)s",
+    )
+
+    return id, data
+
+
+def save_df(data):
+    print(data["id"][0])
+    data.to_csv(data["id"][0] + ".csv", index=False)
+
+
+def next_test(self):
+
+    if exp_counter < 1:
+        otherview = VideoSingleWindow(self)
+    elif exp_counter < 3:
+        otherview = VideoCompWindow(self)
+    else:
+        otherview = EndWindow(self)
+    return otherview
 
 
 if __name__ == "__main__":
+    id, data = init_experiment()
     app = QtWidgets.QApplication(sys.argv)
-    w = MainWindow()
+    w = MainWindow(data, id)
     w.show()
+
     sys.exit(app.exec())
