@@ -24,16 +24,22 @@ import os
 import uuid
 import pandas as pd
 import logging
+import time
 
 # I hate this, but this is what you get when youre sleepy, but wants to get it done
 exp_counter = 0
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, data, id):
+    def __init__(self, id, pers_data, exp_data):
         super(MainWindow, self).__init__()
-        self.data = data
-        self.id = id
+        self.start_time = time.time()
+        self.pers_data = pers_data
+        self.exp_data = exp_data
+        self.uid = id
+        self.exp_counter = 0
+        self.window_type = "pers_info"
+
         uic.loadUi("user_interfaces/main_window.ui", self)
         self.start_button.clicked.connect(self.openOtherForm)
 
@@ -76,19 +82,29 @@ class MainWindow(QMainWindow):
 
     def openOtherForm(self):
         # TODO: make a standard function to advance to the desired screen, to make the sequence random
-        collected_data = {
-            "id": self.id,
+        collected_pers_data = {
+            "id": self.uid,
             "name": self.name_input.toPlainText(),
             "gender": self.gender_box.currentText(),
             "edu": self.edu_lvl_box.currentText(),
             "age": self.age_range_box.currentText(),
         }
-        logging.info(collected_data)
-        print(collected_data)
+        logging.info(collected_pers_data)
+        self.pers_data = self.pers_data.append(collected_pers_data, ignore_index=True)
 
-        self.data = self.data.append(collected_data, ignore_index=True)
+        collected_exp_data = {
+            "id": self.uid,
+            "type": self.window_type,
+            "t0": self.start_time,
+            "tf": time.time(),
+        }
+        logging.info(collected_exp_data)
+        self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
+        print(self.exp_data)
+
         # JSON would make more sense, but lets try a csv for now
-        save_df(self.data)
+        save_df(self.pers_data, self.window_type)
+        # save_df(self.exp_data, self.window_type)
         self.hide()
         otherview = next_test(self)
         otherview.show()
@@ -96,6 +112,15 @@ class MainWindow(QMainWindow):
 
 class VideoCompWindow(QtWidgets.QDialog):
     def __init__(self, parent=None):
+
+        self.exp_counter = parent.exp_counter
+        self.times_played = 0
+        self.uid = parent.uid
+        self.window_type = "comp"
+        self.start_time = time.time()
+        self.order = "comp"
+        self.exp_data = parent.exp_data
+
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = uic.loadUi("user_interfaces/comparison_player.ui", self)
         self.player_1 = QtMultimedia.QMediaPlayer(
@@ -105,41 +130,75 @@ class VideoCompWindow(QtWidgets.QDialog):
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
         file = os.path.join(os.path.dirname(__file__), "test.mp4")
+        logging.info(f"Opening file: {file} as left video")
         self.player_1.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
         self.player_1.setVideoOutput(self.ui.video_player_1)
-        self.player_1.play()
+        self.vid1 = file
 
         file = os.path.join(os.path.dirname(__file__), "test2.mp4")
+        logging.info(f"Opening file: {file} as center video")
         self.player_2.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
         self.player_2.setVideoOutput(self.ui.video_player_2)
+        self.vid2 = file
+
+        self.player_1.play()
         self.player_2.play()
+        self.times_played += 1
+        logging.info("Videos playing")
 
         self.next_button.setEnabled(False)
         self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
 
         self.next_button.clicked.connect(self.openNextScreen)
 
-        self.play_button.clicked.connect(self.reset_video)
+        self.play_button.clicked.connect(lambda: self.reset_video())
 
     def openNextScreen(self):
+        collected_exp_data = {
+            "id": self.uid,
+            "type": self.window_type,
+            "vid1": self.vid1,
+            "vid2": self.vid2,
+            "v1_opt": self.choose_video1.isChecked(),
+            "v2_opt": self.choose_video2.isChecked(),
+            "t0": self.start_time,
+            "tf": time.time(),
+            "replays": self.times_played,
+            "order": self.order,
+        }
+        logging.info(collected_exp_data)
+        self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
+        print(self.exp_data)
+        save_df(self.exp_data, self.window_type)
+
         self.hide()
+        self.exp_counter += 1
         otherview = next_test(self)
-        global exp_counter
-        exp_counter += 1
+        # global exp_counter
         otherview.show()
 
     def reset_video(self):
         self.player_1.setPosition(1)
         self.player_2.setPosition(1)
+        self.times_played += 1
+        logging.info("Reset Video Button Clicked")
 
 
 class VideoSingleWindow(QtWidgets.QDialog):
     def __init__(self, parent=None):
         QtWidgets.QDialog.__init__(self, parent)
+
+        self.exp_counter = parent.exp_counter
+        self.times_played = 0
+        self.uid = parent.uid
+        self.window_type = "single"
+        self.start_time = time.time()
+        self.order = "01091322"
+        self.exp_data = parent.exp_data
 
         self.ui = uic.loadUi("user_interfaces/single_player.ui", self)
         self.player_1 = QtMultimedia.QMediaPlayer(
@@ -149,24 +208,50 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.player_1.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
+        self.vid1 = file
         self.player_1.setVideoOutput(self.ui.video_player_1)
         self.player_1.play()
+        self.times_played += 1
+        logging.info("Videos playing")
+
         self.next_button.setEnabled(False)
         self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
 
-        self.play_button.clicked.connect(self.reset_video)
+        self.play_button.clicked.connect(lambda: self.reset_video())
 
         self.next_button.clicked.connect(self.openNextScreen)
 
     def openNextScreen(self):
+        # TODO: adjust emots and order to represent the actual labls displayed on the screen
+        collected_exp_data = {
+            "id": self.uid,
+            "type": self.window_type,
+            "vid1": self.vid1,
+            "em1": self.choose_emot_1.isChecked(),
+            "em9": self.choose_emot_2.isChecked(),
+            "em13": self.choose_emot_3.isChecked(),
+            "em22": self.choose_emot_4.isChecked(),
+            "t0": self.start_time,
+            "tf": time.time(),
+            "replays": self.times_played,
+            "order": self.order,
+        }
+        logging.info(collected_exp_data)
+        self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
+        print(self.exp_data)
+        save_df(self.exp_data, self.window_type)
+
         self.hide()
+        save_window_data(self)
+        self.exp_counter += 1
         otherview = next_test(self)
-        global exp_counter
-        exp_counter += 1
+        # global exp_counter
         otherview.show()
 
     def reset_video(self):
         self.player_1.setPosition(1)
+        self.times_played += 1
+        logging.info("Reset Video Button Clicked")
 
 
 class EndWindow(QtWidgets.QDialog):
@@ -177,29 +262,55 @@ class EndWindow(QtWidgets.QDialog):
         self.end_button.clicked.connect(self.close)
 
 
+def save_window_data(obj):
+    print(obj.times_played)
+
+
 def init_experiment():
     id = uuid.uuid4().__str__()
-    data = pd.DataFrame(columns=["id", "name", "gender", "edu", "age", "v1"])
+    pers_data = pd.DataFrame(columns=["id", "name", "gender", "edu", "age"])
+    exp_data = pd.DataFrame(
+        columns=[
+            "id",
+            "type",
+            "vid1",
+            "vid2",
+            "em1",
+            "em9",
+            "em13",
+            "em22",
+            "v1_opt",
+            "v2_opt",
+            "t0",
+            "tf",
+            "replays",
+            "order",
+        ]
+    )
     logging.basicConfig(
         filename="app.log",
         filemode="a",
         level=logging.DEBUG,
         format="%(asctime)s -  %(levelname)s - %(message)s",
     )
+    logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 
-    return id, data
+    return id, pers_data, exp_data
 
 
-def save_df(data):
+def save_df(data, window_type):
     print(data["id"][0])
-    data.to_csv(data["id"][0] + ".csv", index=False)
+    if window_type == "pers_info":
+        data.to_csv(data["id"][0] + ".csv", index=False)
+    elif window_type == "single" or window_type == "comp":
+        data.to_csv(f"exp_{data['id'][0]}.csv", index=False)
 
 
 def next_test(self):
 
-    if exp_counter < 1:
+    if self.exp_counter < 2:
         otherview = VideoSingleWindow(self)
-    elif exp_counter < 3:
+    elif self.exp_counter < 4:
         otherview = VideoCompWindow(self)
     else:
         otherview = EndWindow(self)
@@ -207,9 +318,9 @@ def next_test(self):
 
 
 if __name__ == "__main__":
-    id, data = init_experiment()
+    id, pers_data, exp_data = init_experiment()
     app = QtWidgets.QApplication(sys.argv)
-    w = MainWindow(data, id)
+    w = MainWindow(id, pers_data, exp_data)
     w.show()
 
     sys.exit(app.exec())

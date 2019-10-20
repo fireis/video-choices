@@ -68,7 +68,7 @@
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
     <item>
-     <widget class="QRadioButton" name="choose_video2">
+     <widget class="QRadioButton" name="choose_video1">
       <property name="text">
        <string/>
       </property>
@@ -78,7 +78,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QRadioButton" name="choose_video1">
+     <widget class="QRadioButton" name="choose_video2">
       <property name="text">
        <string/>
       </property>
