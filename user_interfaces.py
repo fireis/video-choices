@@ -1,20 +1,4 @@
-from PyQt5.QtCore import QDir, Qt, QUrl
-from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
-from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtWidgets import (
-    QApplication,
-    QFileDialog,
-    QHBoxLayout,
-    QLabel,
-    QPushButton,
-    QSizePolicy,
-    QSlider,
-    QStyle,
-    QVBoxLayout,
-    QWidget,
-)
-from PyQt5.QtWidgets import QMainWindow, QWidget, QPushButton, QAction, QDialog
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QMainWindow
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5 import QtMultimedia
@@ -25,10 +9,7 @@ import uuid
 import pandas as pd
 import logging
 import time
-
-# I hate this, but this is what you get when youre sleepy, but wants to get it done
-exp_counter = 0
-
+import random
 
 class MainWindow(QMainWindow):
     def __init__(self, id, pers_data, exp_data):
@@ -39,6 +20,8 @@ class MainWindow(QMainWindow):
         self.uid = id
         self.exp_counter = 0
         self.window_type = "pers_info"
+        self.single_count = 0
+        self.comp_count = 0
 
         uic.loadUi("user_interfaces/main_window.ui", self)
         self.start_button.clicked.connect(self.openOtherForm)
@@ -102,9 +85,7 @@ class MainWindow(QMainWindow):
         self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
         print(self.exp_data)
 
-        # JSON would make more sense, but lets try a csv for now
         save_df(self.pers_data, self.window_type)
-        # save_df(self.exp_data, self.window_type)
         self.hide()
         otherview = next_test(self)
         otherview.show()
@@ -118,8 +99,9 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.uid = parent.uid
         self.window_type = "comp"
         self.start_time = time.time()
-        self.order = "comp"
         self.exp_data = parent.exp_data
+        self.single_count = parent.single_count
+        self.comp_count = parent.comp_count + 1
 
         QtWidgets.QDialog.__init__(self, parent)
         self.ui = uic.loadUi("user_interfaces/comparison_player.ui", self)
@@ -167,8 +149,7 @@ class VideoCompWindow(QtWidgets.QDialog):
             "v2_opt": self.choose_video2.isChecked(),
             "t0": self.start_time,
             "tf": time.time(),
-            "replays": self.times_played,
-            "order": self.order,
+            "replays": self.times_played
         }
         logging.info(collected_exp_data)
         self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
@@ -178,7 +159,6 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.hide()
         self.exp_counter += 1
         otherview = next_test(self)
-        # global exp_counter
         otherview.show()
 
     def reset_video(self):
@@ -199,6 +179,8 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.start_time = time.time()
         self.order = "01091322"
         self.exp_data = parent.exp_data
+        self.single_count = parent.single_count + 1
+        self.comp_count = parent.comp_count
 
         self.ui = uic.loadUi("user_interfaces/single_player.ui", self)
         self.player_1 = QtMultimedia.QMediaPlayer(
@@ -307,11 +289,14 @@ def save_df(data, window_type):
 
 
 def next_test(self):
-
-    if self.exp_counter < 2:
-        otherview = VideoSingleWindow(self)
-    elif self.exp_counter < 4:
-        otherview = VideoCompWindow(self)
+    # assures the sequence of screens is random while respecting the max of interaction
+    experiment_choice = random.choice(["single", "comp"])
+    individual_max = 3
+    if self.single_count + self.comp_count  < 6:
+        if (experiment_choice == "single" and self.single_count < individual_max) or self.comp_count >= individual_max:
+            otherview = VideoSingleWindow(self)
+        elif (experiment_choice == "comp" and self.comp_count < individual_max) or self.single_count >= infividual_max:
+            otherview = VideoCompWindow(self)
     else:
         otherview = EndWindow(self)
     return otherview
