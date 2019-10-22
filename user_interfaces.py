@@ -10,6 +10,8 @@ import pandas as pd
 import logging
 import time
 import random
+import glob
+
 
 class MainWindow(QMainWindow):
     def __init__(self, id, pers_data, exp_data):
@@ -111,6 +113,7 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.player_2 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
+        # TODO: make file choice so that picks a random video from A folder, other from B and ramdomly assign them to player 1 and 2
         file = os.path.join(os.path.dirname(__file__), "test.mp4")
         logging.info(f"Opening file: {file} as left video")
         self.player_1.setMedia(
@@ -149,7 +152,7 @@ class VideoCompWindow(QtWidgets.QDialog):
             "v2_opt": self.choose_video2.isChecked(),
             "t0": self.start_time,
             "tf": time.time(),
-            "replays": self.times_played
+            "replays": self.times_played,
         }
         logging.info(collected_exp_data)
         self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
@@ -186,7 +189,11 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.player_1 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
-        file = os.path.join(os.path.dirname(__file__), "test.mp4")
+
+        file = random.choice(
+            find_videos_on_folder("D:\\masters\\video-choices\\videos\\emotion_def")
+        )
+        # file = os.path.join(os.path.dirname(__file__), "/videos/synth_comp")
         self.player_1.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
@@ -288,18 +295,32 @@ def save_df(data, window_type):
         data.to_csv(f"exp_{data['id'][0]}.csv", index=False)
 
 
+def find_videos_on_folder(path):
+    """
+    searches the input path for videos and returns a list with the found content
+    :param path: in which the videos should be found
+    :return: list with paths for available videos
+    """
+    videos = glob.glob(path + "\*.mp4")
+    return videos
+
+
 def next_test(self):
-    # assures the sequence of screens is random while respecting the max of interaction
+    """
+    assures the sequence of screens is random while respecting the max of interaction
+    """
     experiment_choice = random.choice(["single", "comp"])
     individual_max = 3
-    if self.single_count + self.comp_count  < 6:
-        if (experiment_choice == "single" and self.single_count < individual_max) or self.comp_count >= individual_max:
-            otherview = VideoSingleWindow(self)
-        elif (experiment_choice == "comp" and self.comp_count < individual_max) or self.single_count >= infividual_max:
-            otherview = VideoCompWindow(self)
-    else:
-        otherview = EndWindow(self)
-    return otherview
+    if self.single_count + self.comp_count < individual_max * 2:
+        if (
+            experiment_choice == "single" and self.single_count < individual_max
+        ) or self.comp_count >= individual_max:
+            return VideoSingleWindow(self)
+        elif (
+            experiment_choice == "comp" and self.comp_count < individual_max
+        ) or self.single_count >= individual_max:
+            return VideoCompWindow(self)
+    return EndWindow(self)
 
 
 if __name__ == "__main__":
