@@ -11,7 +11,7 @@ import logging
 import time
 import random
 import glob
-
+import pathlib
 
 class MainWindow(QMainWindow):
     def __init__(self, id, pers_data, exp_data):
@@ -186,14 +186,16 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.comp_count = parent.comp_count
 
         self.ui = uic.loadUi("user_interfaces/single_player.ui", self)
+        self.write_emotion_labels()
         self.player_1 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
-
+        file = os.path.join(os.path.dirname(__file__), "/videos/emotion_def/")
+        # print(file)
+        # print(find_videos_on_folder("videos/emotion_def/"))
         file = random.choice(
-            find_videos_on_folder("D:\\masters\\video-choices\\videos\\emotion_def")
+            find_videos_on_folder(file)
         )
-        # file = os.path.join(os.path.dirname(__file__), "/videos/synth_comp")
         self.player_1.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
@@ -210,16 +212,24 @@ class VideoSingleWindow(QtWidgets.QDialog):
 
         self.next_button.clicked.connect(self.openNextScreen)
 
+    def write_emotion_labels(self):
+        emotions = ["Anger", "Admiration", "Fear", "Happy-for"]
+        random.shuffle(emotions)
+        self.choose_emot_1.setText(emotions[0])
+        self.choose_emot_2.setText(emotions[1])
+        self.choose_emot_3.setText(emotions[2])
+        self.choose_emot_4.setText(emotions[3])
+
     def openNextScreen(self):
         # TODO: adjust emots and order to represent the actual labls displayed on the screen
         collected_exp_data = {
             "id": self.uid,
             "type": self.window_type,
             "vid1": self.vid1,
-            "em1": self.choose_emot_1.isChecked(),
-            "em9": self.choose_emot_2.isChecked(),
-            "em13": self.choose_emot_3.isChecked(),
-            "em22": self.choose_emot_4.isChecked(),
+            "b1": (self.choose_emot_1.isChecked(), self.choose_emot_1.text()),
+            "b2": (self.choose_emot_2.isChecked(), self.choose_emot_2.text()),
+            "b3": (self.choose_emot_3.isChecked(), self.choose_emot_3.text()),
+            "b4": (self.choose_emot_4.isChecked(), self.choose_emot_4.text()),
             "t0": self.start_time,
             "tf": time.time(),
             "replays": self.times_played,
@@ -301,7 +311,10 @@ def find_videos_on_folder(path):
     :param path: in which the videos should be found
     :return: list with paths for available videos
     """
-    videos = glob.glob(path + "\*.mp4")
+    videos = glob.glob(path + "*.mp4")
+    # videos = pathlib.Path.glob(path, "*.mp4" )
+    # videos = [x for x in videos if x.is_file()]
+
     return videos
 
 
