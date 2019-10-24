@@ -114,21 +114,21 @@ class VideoCompWindow(QtWidgets.QDialog):
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
         # TODO: make file choice so that picks a random video from A folder, other from B and ramdomly assign them to player 1 and 2
-        file = os.path.join(os.path.dirname(__file__), "test.mp4")
-        logging.info(f"Opening file: {file} as left video")
+        file = os.path.join(os.path.dirname(__file__), "videos/synth_comp/")
+        vid_l, vid_r = find_videos_on_folder(file, ab=True)
+        logging.info(f"Opening file: {vid_l} as left video")
         self.player_1.setMedia(
-            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
+            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(vid_l))
         )
         self.player_1.setVideoOutput(self.ui.video_player_1)
-        self.vid1 = file
+        self.vid1 = vid_l
 
-        file = os.path.join(os.path.dirname(__file__), "test2.mp4")
-        logging.info(f"Opening file: {file} as center video")
+        logging.info(f"Opening file: {vid_r} as center video")
         self.player_2.setMedia(
-            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
+            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(vid_r))
         )
         self.player_2.setVideoOutput(self.ui.video_player_2)
-        self.vid2 = file
+        self.vid2 = vid_r
 
         self.player_1.play()
         self.player_2.play()
@@ -180,22 +180,18 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.uid = parent.uid
         self.window_type = "single"
         self.start_time = time.time()
-        self.order = "01091322"
+
         self.exp_data = parent.exp_data
         self.single_count = parent.single_count + 1
         self.comp_count = parent.comp_count
 
         self.ui = uic.loadUi("user_interfaces/single_player.ui", self)
-        self.write_emotion_labels()
+        self.order = self.write_emotion_labels()
         self.player_1 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
-        file = os.path.join(os.path.dirname(__file__), "/videos/emotion_def/")
-        # print(file)
-        # print(find_videos_on_folder("videos/emotion_def/"))
-        file = random.choice(
-            find_videos_on_folder(file)
-        )
+        file = os.path.join(os.path.dirname(__file__), "videos/emotion_def/")
+        file = find_videos_on_folder(file, ab=False)
         self.player_1.setMedia(
             QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
         )
@@ -219,6 +215,7 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.choose_emot_2.setText(emotions[1])
         self.choose_emot_3.setText(emotions[2])
         self.choose_emot_4.setText(emotions[3])
+        return emotions
 
     def openNextScreen(self):
         # TODO: adjust emots and order to represent the actual labls displayed on the screen
@@ -305,17 +302,23 @@ def save_df(data, window_type):
         data.to_csv(f"exp_{data['id'][0]}.csv", index=False)
 
 
-def find_videos_on_folder(path):
+def find_videos_on_folder(path, ab):
     """
-    searches the input path for videos and returns a list with the found content
+    searches the input path for videos and returns one or two randomly selected videos
     :param path: in which the videos should be found
+    :param ab: if true, return two videos from folders a and b
     :return: list with paths for available videos
     """
-    videos = glob.glob(path + "*.mp4")
-    # videos = pathlib.Path.glob(path, "*.mp4" )
-    # videos = [x for x in videos if x.is_file()]
-
-    return videos
+    # TODO: fix as this doesnt work on mac
+    if ab:
+        videos_a = random.choice(glob.glob(path + "A/*.mp4"))
+        videos_b = random.choice(glob.glob(path + "B/*.mp4"))
+        videos = [videos_a, videos_b]
+        random.shuffle(videos)
+        return videos[0], videos[1]
+    else:
+        video = random.choice(glob.glob(path + "*.mp4"))
+        return video
 
 
 def next_test(self):
