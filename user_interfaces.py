@@ -167,6 +167,8 @@ class VideoCompWindow(QtWidgets.QDialog):
     def reset_video(self):
         self.player_1.setPosition(1)
         self.player_2.setPosition(1)
+        self.player_1.play()
+        self.player_2.play()
         self.times_played += 1
         logging.info("Reset Video Button Clicked")
 
@@ -245,6 +247,7 @@ class VideoSingleWindow(QtWidgets.QDialog):
 
     def reset_video(self):
         self.player_1.setPosition(1)
+        self.player_1.play()
         self.times_played += 1
         logging.info("Reset Video Button Clicked")
 

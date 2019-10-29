@@ -16,10 +16,10 @@
   <widget class="QPushButton" name="confirm_button">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>710</y>
-     <width>75</width>
-     <height>23</height>
+     <x>540</x>
+     <y>620</y>
+     <width>120</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="text">
@@ -57,10 +57,10 @@
   <widget class="QPushButton" name="next_button">
    <property name="geometry">
     <rect>
-     <x>570</x>
-     <y>730</y>
-     <width>75</width>
-     <height>23</height>
+     <x>540</x>
+     <y>720</y>
+     <width>120</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="text">
@@ -115,12 +115,12 @@
     <rect>
      <x>150</x>
      <y>600</y>
-     <width>51</width>
-     <height>41</height>
+     <width>120</width>
+     <height>50</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Ver novamente</string>
    </property>
    <property name="icon">
     <iconset>
