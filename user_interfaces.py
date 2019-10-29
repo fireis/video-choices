@@ -241,7 +241,6 @@ class VideoSingleWindow(QtWidgets.QDialog):
         save_window_data(self)
         self.exp_counter += 1
         otherview = next_test(self)
-        # global exp_counter
         otherview.show()
 
     def reset_video(self):
@@ -286,7 +285,7 @@ def init_experiment():
     logging.basicConfig(
         filename="app.log",
         filemode="a",
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s -  %(levelname)s - %(message)s",
     )
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
@@ -311,9 +310,9 @@ def find_videos_on_folder(path, ab):
     """
     # TODO: fix as this doesnt work on mac
     if ab:
-        videos_a = random.choice(glob.glob(path + "A/*.mp4"))
-        videos_b = random.choice(glob.glob(path + "B/*.mp4"))
-        videos = [videos_a, videos_b]
+        video_a =  random.choice(glob.glob(path + "A/*/*.mp4"))
+        video_b = video_a.replace("/A", "/B")
+        videos = [video_a, video_b]
         random.shuffle(videos)
         return videos[0], videos[1]
     else:
