@@ -16,8 +16,8 @@
   <widget class="QPushButton" name="confirm_button">
    <property name="geometry">
     <rect>
-     <x>460</x>
-     <y>580</y>
+     <x>540</x>
+     <y>620</y>
      <width>120</width>
      <height>50</height>
     </rect>
@@ -29,8 +29,8 @@
   <widget class="QPushButton" name="next_button">
    <property name="geometry">
     <rect>
-     <x>550</x>
-     <y>670</y>
+     <x>540</x>
+     <y>720</y>
      <width>120</width>
      <height>50</height>
     </rect>
@@ -63,7 +63,7 @@
      <x>161</x>
      <y>515</y>
      <width>521</width>
-     <height>16</height>
+     <height>52</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -72,6 +72,15 @@
       <property name="text">
        <string/>
       </property>
+      <property name="iconSize">
+       <size>
+        <width>64</width>
+        <height>64</height>
+       </size>
+      </property>
+      <property name="shortcut">
+       <string>Ctrl+S</string>
+      </property>
       <property name="checked">
        <bool>true</bool>
       </property>
@@ -79,6 +88,12 @@
     </item>
     <item>
      <widget class="QRadioButton" name="choose_video2">
+      <property name="minimumSize">
+       <size>
+        <width>253</width>
+        <height>13</height>
+       </size>
+      </property>
       <property name="text">
        <string/>
       </property>
@@ -133,8 +148,8 @@
   <widget class="QPushButton" name="play_button">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>580</y>
+     <x>150</x>
+     <y>600</y>
      <width>120</width>
      <height>50</height>
     </rect>
