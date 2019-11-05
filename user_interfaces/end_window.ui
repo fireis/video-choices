@@ -13,17 +13,82 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>40</y>
+     <width>641</width>
+     <height>671</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="4,4,0">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <pointsize>30</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Muito obrigado por participar da nossa pesquisa! </string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="font">
+       <font>
+        <pointsize>30</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Se tiver algum comentário, pode deixar no campo abaixo:</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0">
+      <property name="spacing">
+       <number>50</number>
+      </property>
+      <item>
+       <widget class="QPlainTextEdit" name="name_input">
+        <property name="minimumSize">
+         <size>
+          <width>256</width>
+          <height>30</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>256</width>
+          <height>60</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
   <widget class="QPushButton" name="end_button">
    <property name="geometry">
     <rect>
-     <x>400</x>
-     <y>630</y>
-     <width>75</width>
-     <height>23</height>
+     <x>290</x>
+     <y>720</y>
+     <width>200</width>
+     <height>60</height>
     </rect>
    </property>
    <property name="text">
-    <string>end</string>
+    <string>Finalizar</string>
    </property>
   </widget>
  </widget>

@@ -113,6 +113,9 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.player_2 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
+        self.choose_video1.setFixe
+
+
         # TODO: make file choice so that picks a random video from A folder, other from B and ramdomly assign them to player 1 and 2
         file = os.path.join(os.path.dirname(__file__), "videos/synth_comp/")
         vid_l, vid_r = find_videos_on_folder(file, ab=True)

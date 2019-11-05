@@ -54,7 +54,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Qual dos vídeos você considera mais natural?</string>
+    <string>Qual dos vídeos você considera mais realista?</string>
    </property>
   </widget>
   <widget class="QWidget" name="horizontalLayoutWidget_2">
