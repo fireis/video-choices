@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QRadioButton
 from PyQt5 import uic
 from PyQt5 import QtWidgets
 from PyQt5 import QtMultimedia
@@ -110,10 +110,12 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.player_1 = QtMultimedia.QMediaPlayer(
             None, QtMultimedia.QMediaPlayer.VideoSurface
         )
-        self.player_2 = QtMultimedia.QMediaPlayer(
-            None, QtMultimedia.QMediaPlayer.VideoSurface
-        )
-        self.choose_video1.setFixe
+        # self.player_2 = QtMultimedia.QMediaPlayer(
+        #     None, QtMultimedia.QMediaPlayer.VideoSurface
+        # )
+        # self.choose_video1.setFixe
+
+
 
 
         # TODO: make file choice so that picks a random video from A folder, other from B and ramdomly assign them to player 1 and 2
@@ -127,14 +129,14 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.vid1 = vid_l
 
         logging.info(f"Opening file: {vid_r} as center video")
-        self.player_2.setMedia(
-            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(vid_r))
-        )
-        self.player_2.setVideoOutput(self.ui.video_player_2)
-        self.vid2 = vid_r
+        # self.player_2.setMedia(
+        #     QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(vid_r))
+        # )
+        # self.player_2.setVideoOutput(self.ui.video_player_2)
+        # self.vid2 = vid_r
 
         self.player_1.play()
-        self.player_2.play()
+        # self.player_2.play()
         self.times_played += 1
         logging.info("Videos playing")
 
@@ -169,9 +171,9 @@ class VideoCompWindow(QtWidgets.QDialog):
 
     def reset_video(self):
         self.player_1.setPosition(1)
-        self.player_2.setPosition(1)
+        # self.player_2.setPosition(1)
         self.player_1.play()
-        self.player_2.play()
+        # self.player_2.play()
         self.times_played += 1
         logging.info("Reset Video Button Clicked")
 
