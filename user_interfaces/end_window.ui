@@ -59,7 +59,7 @@
        <number>50</number>
       </property>
       <item>
-       <widget class="QPlainTextEdit" name="name_input">
+       <widget class="QPlainTextEdit" name="comments">
         <property name="minimumSize">
          <size>
           <width>256</width>
