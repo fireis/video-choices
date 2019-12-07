@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+
+
 from PyQt5.QtWidgets import QMainWindow, QVBoxLayout, QRadioButton
 from PyQt5 import uic
 from PyQt5 import QtWidgets
@@ -25,18 +28,9 @@ class MainWindow(QMainWindow):
         self.window_type = "pers_info"
         self.single_count = 0
         self.comp_count = 0
+
         # TODO: CLEAN THIS MESS
-        # WARNING: THIS COMMIT SUX BUT WORKS FOR THE TEST
-        # self.emo_okp_car_vem_count = 0
-        # self.emo_okp_edu_vem_count = 0
-        # self.emo_hmm_vem_count = 0
-        # self.syn_car_vem_v2v_count = 0
-        # self.emo_hmm_vem = 0
-        # self.syn_vem_hmm_v2v_count = 0
-        # self.syn_hmm_vem_v2v_count = 0
-        # self.syn_car_vem_v2v = 0
-        # self.syn_hmm_vem_v2v_aud_count = 0
-        # self.exp_choices = ["emo_okp_car_vem", "emo_okp_edu_vem", "emo_hmm_vem", "syn_car_vem_v2v", "syn_hmm_vem_v2v", "syn_hmm_vem_v2v_aud"]
+
 
         path = os.path.join(os.path.dirname(__file__), "videos/")
 
@@ -143,12 +137,21 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.times_played += 1
         logging.info("Videos playing")
 
-        self.next_button.setEnabled(False)
-        self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
+        # self.next_button.setEnabled(False)
+        self.next_button.setVisible(False)
+        # self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
+        self.confirm_button.clicked.connect(lambda: self.next_button.setVisible(True))
+        # self.player_1.mediaStatusChanged.connect(lambda: self.video_ended())
+
 
         self.next_button.clicked.connect(self.openNextScreen)
 
         self.play_button.clicked.connect(lambda: self.reset_video())
+
+    # def video_ended(self):
+    #     print(self.player_1.mediaStatus())
+    #     if self.player_1.mediaStatus() == 7:
+    #         self.player_1.setPosition(10)
 
     def openNextScreen(self):
         collected_exp_data = {
@@ -156,6 +159,7 @@ class VideoCompWindow(QtWidgets.QDialog):
             "type": self.window_type,
             "vid1": self.vid1,
             "v1_opt": self.choose_video1.isChecked(),
+            "v2_opt": self.choose_video2.isChecked(),
             "t0": self.start_time,
             "tf": time.time(),
             "replays": self.times_played,
@@ -164,7 +168,7 @@ class VideoCompWindow(QtWidgets.QDialog):
         self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
         print(self.exp_data)
         save_df(self.exp_data, self.window_type)
-
+        self.player_1.stop()
         self.hide()
         self.exp_counter += 1
         otherview = next_test(self)
@@ -172,9 +176,7 @@ class VideoCompWindow(QtWidgets.QDialog):
 
     def reset_video(self):
         self.player_1.setPosition(1)
-        # self.player_2.setPosition(1)
         self.player_1.play()
-        # self.player_2.play()
         self.times_played += 1
         logging.info("Reset Video Button Clicked")
 
@@ -210,12 +212,22 @@ class VideoSingleWindow(QtWidgets.QDialog):
         self.times_played += 1
         logging.info("Videos playing")
 
-        self.next_button.setEnabled(False)
-        self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
+        # self.next_button.setEnabled(False)
+        # self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
+        self.next_button.setVisible(False)
+        # self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
+        self.confirm_button.clicked.connect(lambda: self.next_button.setVisible(True))
+        # self.confirm_button.clicked.connect(lambda: self.next_button.update() )
+        # self.player_1.mediaStatusChanged.connect(lambda: self.video_ended())
 
         self.play_button.clicked.connect(lambda: self.reset_video())
 
         self.next_button.clicked.connect(self.openNextScreen)
+
+    def video_ended(self):
+        if self.player_1.mediaStatus() == 7:
+            self.player_1.setPosition(1)
+        # print(self.player_1.mediaStatus())
 
     def write_emotion_labels(self):
         emotions = ["Com Raiva", "Admirada", "Amedrontada", "Feliz por alguém"]
@@ -246,6 +258,10 @@ class VideoSingleWindow(QtWidgets.QDialog):
         print(self.exp_data)
         save_df(self.exp_data, self.window_type)
 
+
+        self.player_1.stop()
+
+
         self.hide()
         save_window_data(self)
         self.exp_counter += 1
@@ -253,94 +269,9 @@ class VideoSingleWindow(QtWidgets.QDialog):
         otherview.show()
 
     def reset_video(self):
-        self.player_1.setPosition(1)
-        self.player_1.play()
-        self.times_played += 1
-        logging.info("Reset Video Button Clicked")
-
-
-class VideoSingleWindow_emo_okp_car_vem(QtWidgets.QDialog):
-    def __init__(self, parent=None):
-        QtWidgets.QDialog.__init__(self, parent)
-
-        self.exp_counter = parent.exp_counter
-        self.times_played = 0
-        self.uid = parent.uid
-        self.window_type = "single"
-        self.start_time = time.time()
-
-        self.exp_data = parent.exp_data
-        self.single_count = parent.single_count + 1
-        self.comp_count = parent.comp_count
-        self.emo_okp_car_vem_count = parent.emo_okp_car_vem_count + 1
-        self.emo_okp_edu_vem_count = parent.emo_okp_edu_vem_count
-        self.emo_hmm_vem_count = parent.emo_hmm_vem_count
-        self.syn_car_vem_v2v_count = parent.syn_car_vem_v2v_count
-        self.syn_hmm_vem_v2v_count = parent.syn_hmm_vem_v2v_count
-        self.syn_hmm_vem_v2v_aud_count = parent.syn_hmm_vem_v2v_aud_count
-        self.emo_hmm_vem = parent.emo_hmm_vem
-        self.syn_car_vem_v2v = parent.syn_car_vem_v2v
-        self.exp_choices = parent.exp_choices
-
-        self.ui = uic.loadUi("user_interfaces/single_player.ui", self)
-        self.order = self.write_emotion_labels()
-        self.player_1 = QtMultimedia.QMediaPlayer(
-            None, QtMultimedia.QMediaPlayer.VideoSurface
-        )
-        file = os.path.join(os.path.dirname(__file__), "videos/emo_okp_car_vem/")
-        file = find_videos_on_folder(file, ab=False)
         self.player_1.setMedia(
-            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(file))
+            QtMultimedia.QMediaContent(QtCore.QUrl.fromLocalFile(self.vid1))
         )
-        self.vid1 = file
-        self.player_1.setVideoOutput(self.ui.video_player_1)
-        self.player_1.play()
-        self.times_played += 1
-        logging.info("Videos playing")
-
-        self.next_button.setEnabled(False)
-        self.confirm_button.clicked.connect(lambda: self.next_button.setEnabled(True))
-
-        self.play_button.clicked.connect(lambda: self.reset_video())
-
-        self.next_button.clicked.connect(self.openNextScreen)
-
-    def write_emotion_labels(self):
-        emotions = ["Anger", "Admiration", "Fear", "Happy-for"]
-        random.shuffle(emotions)
-        self.choose_emot_1.setText(emotions[0])
-        self.choose_emot_2.setText(emotions[1])
-        self.choose_emot_3.setText(emotions[2])
-        self.choose_emot_4.setText(emotions[3])
-        return emotions
-
-    def openNextScreen(self):
-        # TODO: adjust emots and order to represent the actual labls displayed on the screen
-        collected_exp_data = {
-            "id": self.uid,
-            "type": self.window_type,
-            "vid1": self.vid1,
-            "b1": (self.choose_emot_1.isChecked(), self.choose_emot_1.text()),
-            "b2": (self.choose_emot_2.isChecked(), self.choose_emot_2.text()),
-            "b3": (self.choose_emot_3.isChecked(), self.choose_emot_3.text()),
-            "b4": (self.choose_emot_4.isChecked(), self.choose_emot_4.text()),
-            "t0": self.start_time,
-            "tf": time.time(),
-            "replays": self.times_played,
-            "order": self.order,
-        }
-        logging.info(collected_exp_data)
-        self.exp_data = self.exp_data.append(collected_exp_data, ignore_index=True)
-        print(self.exp_data)
-        save_df(self.exp_data, self.window_type)
-
-        self.hide()
-        save_window_data(self)
-        self.exp_counter += 1
-        otherview, self = next_test(self)
-        otherview.show()
-
-    def reset_video(self):
         self.player_1.setPosition(1)
         self.player_1.play()
         self.times_played += 1
@@ -429,9 +360,16 @@ def next_test(self):
     assures the sequence of screens is random while respecting the max of interaction
     """
     next = random.choice(["comp", "single"])
-    if next == "comp" and len(self.comp_experiments) > 19:
+    s = len(self.single_experiments)
+    c = len(self.comp_experiments)
+    print(f"comp {c} s {s}")
+    if next == "comp" and len(self.comp_experiments) > 0:
         return VideoCompWindow(self)
-    elif len(self.single_experiments) > 29:
+    elif next =="single" and len(self.single_experiments) > 0:
+        return VideoSingleWindow(self)
+    elif c > 0 and s == 0:
+        return VideoCompWindow(self)
+    elif c == 0 and s > 0:
         return VideoSingleWindow(self)
 
     return EndWindow(self)
